@@ -1,22 +1,26 @@
+require('dotenv').config();  // Load environment variables from .env file
+
 const express = require('express');
-const cors = require('cors');
-const connectDB = require('./src/config/db');  // MongoDB connection
-const userRoutes = require('./src/routes/userRoutes');
+const mongoose = require('mongoose');
+const connectDB = require('./config/db');
 
 const app = express();
 const port = 5000;
 
-require('dotenv').config(); // Load environment variables
-
-app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
 connectDB();
 
-// Use Routes
-app.use('/users', userRoutes);
+// Routes
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const protectedRoutes = require('./routes/protectedRoutes');
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// Use Routes
+app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
+app.use('/protected', protectedRoutes);
+
+// Start server
+app.listen(port, () => console.log(`Server running on port ${port}`));
